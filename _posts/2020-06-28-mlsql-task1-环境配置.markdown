@@ -1,0 +1,9 @@
+---
+layout: post
+category: MLSQL
+---
+
+## 1.配置MLSQL Engine开发环境
+将 MLSQL Engine 项目代码用 IDE 导入，然后设置好 Maven Profile，如下勾选
+
+## 2.配置MLSQL Console
