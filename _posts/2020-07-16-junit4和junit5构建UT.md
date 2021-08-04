@@ -157,3 +157,74 @@ test的env设置希望与运行环境一致。
 这样使用：
 ![2222](/public/img/junit-2.png)
 
+---------
+### mockMvc @PathVariable 匹配
+｜ have to use string splicing instead of pathVariable like "/api/job/{jobId}", cause controller using @RestController
+
+@RestController 和 @Controller 有所不同：
+- Get请求，相差不大 
+- Post请求，@RestController 中包含 @ResponseBody
+- - headers中必须包含Content-Type："application/json;charset=UTF-8"
+- - mockMvc有PathVariable时需要使用拼接字符串的方式，不能使用变量方式（原因未知）    
+
+```java
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("api/job/{jobId}/cancel", testId)
+                .requestAttr("username", username)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json;charset=UTF-8")
+                )
+```
+结果
+```text
+
+MockHttpServletRequest:
+      HTTP Method = POST
+      Request URI = api/job/2147483647/cancel
+       Parameters = {}
+          Headers = {Accept=[application/json], Content-Type=[application/json;charset=UTF-8]}
+             Body = null
+    Session Attrs = {}
+
+Handler:
+             Type = null
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = null
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 404
+    Error message = null
+          Headers = {}
+     Content type = null
+             Body = 
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+
+java.lang.AssertionError: Status expected:<200> but was:<404>
+Expected :200
+Actual   :404
+```
+拼接方式：
+```java
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/api/job/"+testId+"/cancel")
+                .requestAttr("username", username)
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json;charset=UTF-8")
+                )
+```
+结果：
+![junit-3](/public/img/junit-3.png)
+
